@@ -1,5 +1,5 @@
-import { VueUiXy } from "vue-data-ui";
+import { VueUiDonut } from "vue-data-ui";
 
 export default defineNuxtPlugin((nuxtApp) => {
-    nuxtApp.vueApp.component("VueUiXy", VueUiXy);
+    nuxtApp.vueApp.component("VueUiDonut", VueUiDonut);
 })

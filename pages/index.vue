@@ -1,57 +1,139 @@
 <script setup lang="ts">
-
-import { type VueUiXyConfig, type VueUiXyDatasetItem, VueUiXy } from "vue-data-ui";
+import {
+  type VueUiDonutConfig,
+  type VueUiDonutDatasetItem,
+  VueUiDonut,
+} from "vue-data-ui";
 import "vue-data-ui/style.css";
 
-const config = ref<VueUiXyConfig>({
+const config = ref<VueUiDonutConfig>({
+  useCssAnimation: false,
+  style: {
+    fontFamily: "Noto Sans HK",
     chart: {
-        fontFamily: 'Arial'
-    }
+      useGradient: false,
+      layout: {
+        labels: {
+          dataLabels: {
+            hideUnderValue: 0,
+            useLabelSlots: true,
+          },
+          percentage: {
+            bold: false,
+            color: "black",
+          },
+          name: {
+            bold: true,
+            color: "#4A4A4A",
+          },
+          hollow: {
+            total: {
+              show: false,
+            },
+            average: {
+              show: false,
+            },
+          },
+        },
+        donut: {
+          strokeWidth: 18,
+        },
+      },
+      legend: {
+        show: false,
+      },
+      tooltip: {
+        show: false,
+      },
+    },
+  },
+  userOptions: {
+    show: false,
+  },
 });
+const dataset = ref<VueUiDonutDatasetItem[]>([
+  {
+    name: "Series 1",
+    values: [10],
+    color: "rgb(95,139,238)",
+  },
+  {
+    name: "Series 2",
+    values: [10],
 
-const dataset = ref<VueUiXyDatasetItem[]>([
-    {
-        name: "Series 1",
-        series: [-55, -34, -21, -13, -8, -5, -3, -2, -1, -1, 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55],
-        type: "bar"
-        ,
-        color: "rgb(95,139,238)",
-    },
-    {
-        name: "Series 2",
-        series: [55, 34, 21, 13, 8, 5, 3, 2, 1, 1, 0, -1, -1, -2, -3, -5, -8, -13, -21, -34, -55],
-        type:
-            "line"
-        ,
-        color: "rgb(66,211,146)",
-        useProgression: true,
-        dataLabels: false
-    },
-    {
-        name: "Series 3",
-        series: [64, 60, 52, 42, 30, 16, 0, -18, -38, -46, -50, -46, -38, -18, 0, 16, 30, 42, 52, 60, 64],
-        type:
-            "plot"
-        ,
-        color: "rgb(255,100,0)"
-    },
-    {
-        name: "Target",
-        series: [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30],
-        type: "line",
-        color: "#404040",
-        dashed: true,
-        useTag: "start",
-        dataLabels: false,
-    },
+    color: "rgb(66,211,146)",
+  },
+  {
+    name: "Series 3",
+    values: [10],
+
+    color: "rgb(255,100,0)",
+  },
+  {
+    name: "Target",
+    values: [10],
+
+    color: "#404040",
+  },
 ]);
-
 </script>
 
 <template>
-    <div>
+  <div>
     <ClientOnly>
-        <VueUiXy :dataset="dataset" :config="config" />
+      <VueUiDonut :config="config" :dataset="dataset">
+        <template
+          #dataLabel="{
+            datapoint,
+            isBlur,
+            isVisible,
+            isSafari,
+            textAlign,
+            flexAlign,
+            percentage,
+          }"
+        >
+          <div class="data-point-wrap" :class="textAlign" v-if="isVisible">
+            <div class="data-point-name">{{ datapoint.name }}</div>
+            <div class="data-pct">
+              {{ percentage }}
+            </div>
+          </div>
+        </template>
+        <template #svg="{ svg }">
+          <circle
+            :cx="svg.width / 2"
+            :cy="svg.height / 2"
+            :r="130"
+            fill="transparent"
+          />
+        </template>
+      </VueUiDonut>
     </ClientOnly>
-    </div>
+  </div>
 </template>
+<style scoped>
+.data-point-name {
+  font-size: 14px;
+}
+
+.data-pct {
+  color: #4a4a4a;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+:deep(.vue-ui-donut-datalabel-slot){
+  position: fixed;
+}
+
+.data-point-wrap.left {
+  padding-left: 10px;
+  text-align: left;
+}
+
+.data-point-wrap.right {
+  padding-right: 10px;
+  text-align: right;
+}
+</style>
